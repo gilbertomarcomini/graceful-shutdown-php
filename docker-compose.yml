@@ -1,29 +1,45 @@
-version: '3.4'
-
+version: '3.7'
 services:
 
-  api.graceful-shutdown.dev:
-    container_name: api.graceful-shutdown.dev
-    image: nginx:1.19.2
-    working_dir: /application
-    volumes:
-      - ./nginx-local.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - "9048:80"
-    networks:
-      - bubble
-    depends_on:
-      - app.graceful-shutdown.dev
-
-  app.graceful-shutdown.dev:
-    container_name: app.graceful-shutdown.dev
+  api.docker.dev:
+    container_name: api.docker.dev
     build:
       context: ./
       dockerfile: Dockerfile
     volumes:
       - ./:/app
+    ports:
+      - "8080:80"
     networks:
       - bubble
+
+  mongo.docker.dev:
+    container_name: mongo.docker.dev
+    image: mongo:4.0
+    volumes:
+      - docker.mongo:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - bubble
+    environment:
+      MONGO_INITDB_DATABASE: database
+
+  mysql.docker.dev:
+    container_name: mysql.docker.dev
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - bubble
+    ports:
+      - "3306:3306"
+
+volumes:
+  docker.mongo:
 
 networks:
   bubble:

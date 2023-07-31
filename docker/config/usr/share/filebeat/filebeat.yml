@@ -1,0 +1,16 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/*/*.log
+
+output.elasticsearch:
+  hosts: ["elasticsearch.php-template.dev:9200"]
+  indices:
+    - index: "filebeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+
+setup.kibana:
+  host: "kibana.php-template.dev:5601"
+
+logging.json: true
+logging.metrics.enabled: false
